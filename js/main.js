@@ -53,6 +53,34 @@ function liTotal() {
   console.log(bloqueNuevo);
   contenedor.appendChild(bloqueNuevo);
 }
+
+// Función para insertar HTML del stock
+function insertarHMTLStock() {
+  let bloqueNuevo = document.createElement("li");
+  bloqueNuevo.classList.add(
+    "list-group-item",
+    "d-flex",
+    "justify-content-between"
+  );
+
+  let labelNuevo = document.createElement("label");
+  labelNuevo.setAttribute("for", `prod${producto.id}`);
+  labelNuevo.setAttribute("id", `prod${producto.id}-label`);
+  labelNuevo.innerHTML = `${producto.nombre}  $${producto.precio}`;
+
+  let inputNuevo = document.createElement("input");
+  inputNuevo.setAttribute("type", "number");
+  inputNuevo.setAttribute("name", `prod${producto.id}`);
+  inputNuevo.setAttribute("id", `prod${producto.id}-input`);
+
+  // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
+  //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
+  bloqueNuevo.appendChild(labelNuevo);
+  bloqueNuevo.appendChild(inputNuevo);
+  console.log(inputNuevo);
+  contenedorStock.appendChild(bloqueNuevo);
+}
+
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
@@ -67,10 +95,12 @@ function calcular() {
 
 // Declaración del contenedor donde se insertan los productos
 const contenedor = document.querySelector("#lista-productos");
+const contenedorStock = document.querySelector("#lista-stock");
 
 // Iteración para la inserción del código HTML correspondiente a cada producto
 productos.forEach((producto) => instertarHTMLDeProductos(producto));
 liTotal();
 
+// Eventos
 let botonCalcular = document.querySelector("#btn-calcular");
 botonCalcular.addEventListener("click", calcular);

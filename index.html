@@ -12,21 +12,36 @@
 </head>
 
 <body class="bg-dark">
-  <main class="container-md d-flex p-2 flex-column align-items-center mt-1">
-    <h1 class="my-1 text-light">Calculadora Gigante</h1>
-    <h2 class="my-1 text-light">
-      Ingrese la cantidad vendida para calcular el total
-    </h2>
-    <div class="card m-2">
-      <form id="form-productos" class="">
-        <h3 class="card-header bg-primary-subtle">Lista de productos:</h3>
-        <ul class="list-group list-group-flush" id="lista-productos">
-          <!-- <label for="prod1" id="prod1-label">Producto 1</label>
-            <input type="number" name="prod1" id="prod1-input" /> -->
-        </ul>
-      </form>
+  <h1 class="my-3 text-light text-center">Calculadora Gigante</h1>
+  <main class="container d-flex p-2 flex-row justify-content-evenly align-items-center mt-1">
+    <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
+      <p class="my-1 text-light fs-5">
+        Ingrese la cantidad vendida para calcular el total
+      </p>
+      <div class="card m-2">
+        <form id="form-productos" class="">
+          <h3 class="card-header bg-primary-subtle">Lista de productos:</h3>
+          <ul class="list-group list-group-flush" id="lista-productos">
+            <!-- <label for="prod1" id="prod1-label">Producto 1</label>
+              <input type="number" name="prod1" id="prod1-input" /> -->
+          </ul>
+        </form>
+        <button class="btn btn-primary m-2" id="btn-calcular">Calcular total</button>
+      </div>
     </div>
-    <button class="btn btn-primary m-2" id="btn-calcular">Calcular total</button>
+    <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
+      <p class="my-1 text-light fs-5">
+        Coso
+      </p>
+      <div class="card m-2">
+        <form id="form-stock" class="">
+          <h3 class="card-header bg-primary-subtle">Stock:</h3>
+          <ul class="list-group list-group-flush" id="lista-stock">
+          </ul>
+        </form>
+        <button class="btn btn-primary m-2" id="btn-stock">Actualizar stock</button>
+      </div>
+    </div>
   </main>
   <script src="./js/main.js"></script>
 </body>
