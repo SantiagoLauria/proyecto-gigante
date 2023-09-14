@@ -9,26 +9,45 @@ const productos = [
   { id: 6, nombre: "Powerade 500ml", precio: 500 },
   { id: 7, nombre: "Monster Energy", precio: 700 },
 ];
+
 !localStorage.getItem("productos") &&
   localStorage.setItem("productos", JSON.stringify(productos));
 
-// Ciclo para insertar código HTML por cada producto en el array Productos
-const contenedor = document.querySelector("#form-productos");
-for (let index = 0; index < productos.length; index++) {
-  let bloqueNuevo = document.createElement("div");
-  bloqueNuevo.innerHTML = `<label for="prod${index}" id="prod${index}-label">${productos[index].nombre}  $${productos[index].precio}</label>
-  <input type="number" name="prod${index}" id="prod${index}-input" />`;
+// Función para insertar código HTML de cada producto
+function instertarHTMLDeProductos(producto) {
+  let bloqueNuevo = document.createElement("li");
+  bloqueNuevo.classList.add("list-group-item");
+  bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
+    <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
   contenedor.appendChild(bloqueNuevo);
 }
-let botonCalcular = document.querySelector("#btn-calcular");
-botonCalcular.addEventListener("click", calcular);
 
+function liTotal() {
+  let bloqueNuevo = document.createElement("li");
+  bloqueNuevo.classList.add("list-group-item", "bg-primary-subtle", "fw-bold");
+  bloqueNuevo.setAttribute("id", "total");
+  bloqueNuevo.innerHTML = `Total $${total}`;
+  console.log(bloqueNuevo);
+  contenedor.appendChild(bloqueNuevo);
+}
+// Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
   for (let i = 0; i < productos.length; i++) {
-    let numero = parseInt(document.querySelector(`#prod${i}-input`).value);
+    let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
     numero >= 0 && (total += numero * productos[i].precio);
     console.log(total);
   }
-  alert(total);
+  let elementoTotal = document.querySelector("#total");
+  elementoTotal.innerText = `Total $${total}`;
 }
+
+// Declaración del contenedor donde se insertan los productos
+const contenedor = document.querySelector("#lista-productos");
+
+// Iteración para la inserción del código HTML correspondiente a cada producto
+productos.forEach((producto) => instertarHTMLDeProductos(producto));
+liTotal();
+
+let botonCalcular = document.querySelector("#btn-calcular");
+botonCalcular.addEventListener("click", calcular);
