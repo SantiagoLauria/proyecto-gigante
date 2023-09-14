@@ -16,15 +16,38 @@ const productos = [
 // Función para insertar código HTML de cada producto
 function instertarHTMLDeProductos(producto) {
   let bloqueNuevo = document.createElement("li");
-  bloqueNuevo.classList.add("list-group-item");
-  bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
-    <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
+  bloqueNuevo.classList.add(
+    "list-group-item",
+    "d-flex",
+    "justify-content-between"
+  );
+
+  let labelNuevo = document.createElement("label");
+  labelNuevo.setAttribute("for", `prod${producto.id}`);
+  labelNuevo.setAttribute("id", `prod${producto.id}-label`);
+  labelNuevo.innerHTML = `${producto.nombre}  $${producto.precio}`;
+
+  let inputNuevo = document.createElement("input");
+  inputNuevo.setAttribute("type", "number");
+  inputNuevo.setAttribute("name", `prod${producto.id}`);
+  inputNuevo.setAttribute("id", `prod${producto.id}-input`);
+
+  // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
+  //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
+  bloqueNuevo.appendChild(labelNuevo);
+  bloqueNuevo.appendChild(inputNuevo);
+  console.log(inputNuevo);
   contenedor.appendChild(bloqueNuevo);
 }
 
 function liTotal() {
   let bloqueNuevo = document.createElement("li");
-  bloqueNuevo.classList.add("list-group-item", "bg-primary-subtle", "fw-bold");
+  bloqueNuevo.classList.add(
+    "list-group-item",
+    "bg-primary-subtle",
+    "fw-bold",
+    "text-center"
+  );
   bloqueNuevo.setAttribute("id", "total");
   bloqueNuevo.innerHTML = `Total $${total}`;
   console.log(bloqueNuevo);
