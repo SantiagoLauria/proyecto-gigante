@@ -17,7 +17,7 @@ const contenedor = document.querySelector("#form-productos");
 for (let index = 0; index < productos.length; index++) {
   let bloqueNuevo = document.createElement("div");
   bloqueNuevo.innerHTML = `<label for="prod${index}" id="prod${index}-label">${productos[index].nombre}  $${productos[index].precio}</label>
-  <input type="number" name="prod${index}" id="prod${index}-input" value="0" />`;
+  <input type="number" name="prod${index}" id="prod${index}-input" />`;
   contenedor.appendChild(bloqueNuevo);
 }
 let botonCalcular = document.querySelector("#btn-calcular");
@@ -27,10 +27,8 @@ function calcular() {
   total = 0;
   for (let i = 0; i < productos.length; i++) {
     let numero = parseInt(document.querySelector(`#prod${i}-input`).value);
-    if (numero >= 0) {
-      total += numero * productos[i].precio;
-      console.log(total);
-    }
+    numero >= 0 && (total += numero * productos[i].precio);
+    console.log(total);
   }
   alert(total);
 }
