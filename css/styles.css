@@ -4,3 +4,9 @@
 }
 
 /* la que lee esto es hermosa */
+@media (max-width: 768px) {
+  
+  main{
+    flex-wrap: wrap;
+  }
+}

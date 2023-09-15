@@ -132,5 +132,4 @@ botonCargarStock.addEventListener("click", () => {
   listaProductos[0].stock == undefined
     ? alert("No hay ningún stock guardado")
     : cargarStock();
-  console.log(listaProductos);
 });
