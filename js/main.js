@@ -32,11 +32,8 @@ function instertarHTMLDeProductos(producto) {
   inputNuevo.setAttribute("name", `prod${producto.id}`);
   inputNuevo.setAttribute("id", `prod${producto.id}-input`);
 
-  // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
-  //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
   bloqueNuevo.appendChild(labelNuevo);
   bloqueNuevo.appendChild(inputNuevo);
-  console.log(inputNuevo);
   contenedor.appendChild(bloqueNuevo);
 }
 
@@ -50,12 +47,11 @@ function liTotal() {
   );
   bloqueNuevo.setAttribute("id", "total");
   bloqueNuevo.innerHTML = `Total $${total}`;
-  console.log(bloqueNuevo);
   contenedor.appendChild(bloqueNuevo);
 }
 
 // Función para insertar HTML del stock
-function insertarHMTLStock() {
+function insertarHMTLStock(producto) {
   let bloqueNuevo = document.createElement("li");
   bloqueNuevo.classList.add(
     "list-group-item",
@@ -64,20 +60,19 @@ function insertarHMTLStock() {
   );
 
   let labelNuevo = document.createElement("label");
-  labelNuevo.setAttribute("for", `prod${producto.id}`);
-  labelNuevo.setAttribute("id", `prod${producto.id}-label`);
+  labelNuevo.setAttribute("for", `stock${producto.id}`);
+  labelNuevo.setAttribute("id", `stock${producto.id}-label`);
   labelNuevo.innerHTML = `${producto.nombre}  $${producto.precio}`;
 
   let inputNuevo = document.createElement("input");
   inputNuevo.setAttribute("type", "number");
-  inputNuevo.setAttribute("name", `prod${producto.id}`);
-  inputNuevo.setAttribute("id", `prod${producto.id}-input`);
+  inputNuevo.setAttribute("name", `stock${producto.id}`);
+  inputNuevo.setAttribute("id", `stock${producto.id}-input`);
 
   // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
   //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
   bloqueNuevo.appendChild(labelNuevo);
   bloqueNuevo.appendChild(inputNuevo);
-  console.log(inputNuevo);
   contenedorStock.appendChild(bloqueNuevo);
 }
 
@@ -87,10 +82,31 @@ function calcular() {
   for (let i = 0; i < productos.length; i++) {
     let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
     numero >= 0 && (total += numero * productos[i].precio);
-    console.log(total);
   }
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
+}
+
+// Función para guardar el stock de cada producto en el array -productos-
+function guardarStock() {
+  for (let i = 0; i < productos.length; i++) {
+    let producto = productos[i];
+    producto.stock = document.querySelector(`#stock${i + 1}-input`).value;
+  }
+  console.log(productos);
+
+  localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
+}
+
+function cargarStock() {
+  let listaProductos = JSON.parse(localStorage.getItem("productos"));
+  console.log(listaProductos);
+
+  for (let i = 0; i < listaProductos.length; i++) {
+    let cantidad = listaProductos[i].stock;
+    let input = document.querySelector(`#stock${i + 1}-input`);
+    input.setAttribute("value", `${cantidad}`);
+  }
 }
 
 // Declaración del contenedor donde se insertan los productos
@@ -101,6 +117,20 @@ const contenedorStock = document.querySelector("#lista-stock");
 productos.forEach((producto) => instertarHTMLDeProductos(producto));
 liTotal();
 
+productos.forEach((producto) => insertarHMTLStock(producto));
+
 // Eventos
-let botonCalcular = document.querySelector("#btn-calcular");
+const botonCalcular = document.querySelector("#btn-calcular");
 botonCalcular.addEventListener("click", calcular);
+
+const botonGuardarStock = document.querySelector("#btn-guardar-stock");
+botonGuardarStock.addEventListener("click", guardarStock);
+
+const botonCargarStock = document.querySelector("#btn-cargar-stock");
+botonCargarStock.addEventListener("click", () => {
+  let listaProductos = JSON.parse(localStorage.getItem("productos"));
+  listaProductos[0].stock == undefined
+    ? alert("No hay ningún stock guardado")
+    : cargarStock();
+  console.log(listaProductos);
+});
