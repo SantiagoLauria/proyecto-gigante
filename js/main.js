@@ -1,6 +1,6 @@
 let total = 0;
 // Lista de productos
-const productos = [
+let productos = [
   { id: 1, nombre: "Heineken", precio: 1500 },
   { id: 2, nombre: "Miller", precio: 1300 },
   { id: 3, nombre: "Santa Fe Pilsen", precio: 1000 },
@@ -51,7 +51,7 @@ function liTotal() {
 }
 
 // Función para insertar HTML del stock
-function insertarHMTLStock(producto) {
+function insertarHTMLStock(producto) {
   let bloqueNuevo = document.createElement("li");
   bloqueNuevo.classList.add(
     "list-group-item",
@@ -81,8 +81,12 @@ function calcular() {
   total = 0;
   for (let i = 0; i < productos.length; i++) {
     let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
-    numero >= 0 && (total += numero * productos[i].precio);
+    if (numero >= 0) {
+      total += numero * productos[i].precio;
+      productos[i].stock -= numero;
+    }
   }
+  localStorage.setItem("productos", JSON.stringify(productos));
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
 }
@@ -100,6 +104,7 @@ function guardarStock() {
 
 function cargarStock() {
   let listaProductos = JSON.parse(localStorage.getItem("productos"));
+  productos = listaProductos;
   console.log(listaProductos);
 
   for (let i = 0; i < listaProductos.length; i++) {
@@ -117,7 +122,7 @@ const contenedorStock = document.querySelector("#lista-stock");
 productos.forEach((producto) => instertarHTMLDeProductos(producto));
 liTotal();
 
-productos.forEach((producto) => insertarHMTLStock(producto));
+productos.forEach((producto) => insertarHTMLStock(producto));
 
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
@@ -129,6 +134,7 @@ botonGuardarStock.addEventListener("click", guardarStock);
 const botonCargarStock = document.querySelector("#btn-cargar-stock");
 botonCargarStock.addEventListener("click", () => {
   let listaProductos = JSON.parse(localStorage.getItem("productos"));
+
   listaProductos[0].stock == undefined
     ? alert("No hay ningún stock guardado")
     : cargarStock();
