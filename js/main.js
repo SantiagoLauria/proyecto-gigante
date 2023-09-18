@@ -53,11 +53,7 @@ function liTotal() {
 // Función para insertar HTML del stock
 function insertarHTMLStock(producto) {
   let bloqueNuevo = document.createElement("li");
-  bloqueNuevo.classList.add(
-    "list-group-item",
-    "d-flex",
-    "justify-content-between"
-  );
+  bloqueNuevo.classList.add("list-group-item");
 
   let labelNuevo = document.createElement("label");
   labelNuevo.setAttribute("for", `stock${producto.id}`);
@@ -72,7 +68,7 @@ function insertarHTMLStock(producto) {
 
   let pNuevo = document.createElement("p");
   pNuevo.setAttribute("id", `stockValor${producto.id}`);
-  pNuevo.classList.add("ml-1");
+  pNuevo.classList.add("fw-bold");
   pNuevo.innerHTML = producto.stock;
 
   // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
