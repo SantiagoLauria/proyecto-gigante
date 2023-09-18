@@ -1,12 +1,26 @@
+p{
+  margin: 0px;
+}
+
+
 .card{
   width: 100%;
   max-width: 450px;
 }
+.ml-auto{
+  margin-left: auto;
+}
+.ml-1{
+  margin-left: 1rem;
+  font-weight: bold;
+}
 
-/* la que lee esto es hermosa */
 @media (max-width: 768px) {
   
   main{
     flex-wrap: wrap;
   }
 }
+/* input{
+  height: fit-content;
+} */

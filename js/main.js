@@ -1,13 +1,13 @@
 let total = 0;
 // Lista de productos
-let productos = [
-  { id: 1, nombre: "Heineken", precio: 1500 },
-  { id: 2, nombre: "Miller", precio: 1300 },
-  { id: 3, nombre: "Santa Fe Pilsen", precio: 1000 },
-  { id: 4, nombre: "Gaseosa 1,5L", precio: 900 },
-  { id: 5, nombre: "Aquarius 1,5L", precio: 700 },
-  { id: 6, nombre: "Powerade 500ml", precio: 500 },
-  { id: 7, nombre: "Monster Energy", precio: 700 },
+const productos = [
+  { id: 1, nombre: "Heineken", precio: 1500, stock: 0 },
+  { id: 2, nombre: "Miller", precio: 1300, stock: 0 },
+  { id: 3, nombre: "Santa Fe Pilsen", precio: 1000, stock: 0 },
+  { id: 4, nombre: "Gaseosa 1,5L", precio: 900, stock: 0 },
+  { id: 5, nombre: "Aquarius 1,5L", precio: 700, stock: 0 },
+  { id: 6, nombre: "Powerade 500ml", precio: 500, stock: 0 },
+  { id: 7, nombre: "Monster Energy", precio: 700, stock: 0 },
 ];
 
 !localStorage.getItem("productos") &&
@@ -65,14 +65,21 @@ function insertarHTMLStock(producto) {
   labelNuevo.innerHTML = `${producto.nombre}  $${producto.precio}`;
 
   let inputNuevo = document.createElement("input");
+  inputNuevo.classList.add("ml-auto");
   inputNuevo.setAttribute("type", "number");
   inputNuevo.setAttribute("name", `stock${producto.id}`);
   inputNuevo.setAttribute("id", `stock${producto.id}-input`);
+
+  let pNuevo = document.createElement("p");
+  pNuevo.setAttribute("id", `stockValor${producto.id}`);
+  pNuevo.classList.add("ml-1");
+  pNuevo.innerHTML = producto.stock;
 
   // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
   //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
   bloqueNuevo.appendChild(labelNuevo);
   bloqueNuevo.appendChild(inputNuevo);
+  bloqueNuevo.appendChild(pNuevo);
   contenedorStock.appendChild(bloqueNuevo);
 }
 
@@ -84,33 +91,35 @@ function calcular() {
     if (numero >= 0) {
       total += numero * productos[i].precio;
       productos[i].stock -= numero;
+      document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
     }
   }
-  localStorage.setItem("productos", JSON.stringify(productos));
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
+  localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-// Función para guardar el stock de cada producto en el array -productos-
+// Función para guardar el stock de cada producto en el array -productos- y pasarlos al HTML
 function guardarStock() {
-  for (let i = 0; i < productos.length; i++) {
+  productos.forEach((elemento, i) => {
     let producto = productos[i];
     producto.stock = document.querySelector(`#stock${i + 1}-input`).value;
-  }
-  console.log(productos);
+    document.querySelector(`#stockValor${i + 1}`).innerText = producto.stock;
+  });
 
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
 }
 
 function cargarStock() {
   let listaProductos = JSON.parse(localStorage.getItem("productos"));
-  productos = listaProductos;
-  console.log(listaProductos);
+  productos.forEach(
+    (elemento, i) => (productos[i].stock = listaProductos[i].stock)
+  );
 
   for (let i = 0; i < listaProductos.length; i++) {
     let cantidad = listaProductos[i].stock;
-    let input = document.querySelector(`#stock${i + 1}-input`);
-    input.setAttribute("value", `${cantidad}`);
+    let valor = document.querySelector(`#stockValor${i + 1}`);
+    valor.innerHTML = cantidad;
   }
 }
 
