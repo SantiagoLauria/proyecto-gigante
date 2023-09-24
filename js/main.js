@@ -50,6 +50,19 @@ function liTotal() {
   contenedor.appendChild(bloqueNuevo);
 }
 
+function liStock() {
+  let bloqueNuevo = document.createElement("li");
+  bloqueNuevo.classList.add(
+    "list-group-item",
+    "bg-primary-subtle",
+    "fw-bold",
+    "text-center"
+  );
+  bloqueNuevo.setAttribute("id", "total");
+  bloqueNuevo.innerHTML = `Total $${total}`;
+  contenedorStock.appendChild(bloqueNuevo);
+}
+
 // Función para insertar HTML del stock
 function insertarHTMLStock(producto) {
   let bloqueNuevo = document.createElement("li");
@@ -130,6 +143,14 @@ productos.forEach((producto) => instertarHTMLDeProductos(producto));
 liTotal();
 
 productos.forEach((producto) => insertarHTMLStock(producto));
+// liStock();
+// Para cargar el stock automaticamente
+
+let listaProductos = JSON.parse(localStorage.getItem("productos"));
+
+listaProductos[0].stock == undefined
+  ? alert("No hay ningún stock guardado")
+  : cargarStock();
 
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
@@ -138,11 +159,11 @@ botonCalcular.addEventListener("click", calcular);
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
 botonGuardarStock.addEventListener("click", guardarStock);
 
-const botonCargarStock = document.querySelector("#btn-cargar-stock");
-botonCargarStock.addEventListener("click", () => {
-  let listaProductos = JSON.parse(localStorage.getItem("productos"));
+// const botonCargarStock = document.querySelector("#btn-cargar-stock");
+// botonCargarStock.addEventListener("click", () => {
+//   let listaProductos = JSON.parse(localStorage.getItem("productos"));
 
-  listaProductos[0].stock == undefined
-    ? alert("No hay ningún stock guardado")
-    : cargarStock();
-});
+//   listaProductos[0].stock == undefined
+//     ? alert("No hay ningún stock guardado")
+//     : cargarStock();
+// });
