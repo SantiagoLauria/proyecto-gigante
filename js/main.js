@@ -112,10 +112,12 @@ function calcular() {
 function guardarStock() {
   productos.forEach((elemento, i) => {
     let producto = productos[i];
-    producto.stock = document.querySelector(`#stock${i + 1}-input`).value;
-    producto.stock != "" &&
-      (document.querySelector(`#stockValor${i + 1}`).innerText =
-        producto.stock);
+    if (document.querySelector(`#stock${i + 1}-input`).value != "") {
+      producto.stock = document.querySelector(`#stock${i + 1}-input`).value;
+      producto.stock != "" &&
+        (document.querySelector(`#stockValor${i + 1}`).innerText =
+          producto.stock);
+    }
   });
 
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
