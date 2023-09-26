@@ -95,23 +95,20 @@ function insertarHTMLStock(producto) {
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
-
-  for (let i = 0; i < productos.length; i++) {
+  productos.forEach((element, i) => {
     let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
+    let stock = document.querySelector(`#stockValor${i + 1}`).innerText;
 
-    if (
-      numero >= 0 &&
-      numero <= document.querySelector(`#stockValor${i + 1}`).innerText
-    ) {
+    //  Validación de que lo vendido sea menor al stock
+    if (numero >= 0 && numero <= stock) {
       total += numero * productos[i].precio;
       productos[i].stock -= numero;
       document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
-    } else if (
-      numero > document.querySelector(`#stockValor${i + 1}`).innerText
-    ) {
+      document.querySelector(`#prod${i + 1}-input`).value = "";
+    } else if (numero > stock) {
       alert("Las cantidad vendidas no pueden exceder el stock");
     }
-  }
+  });
 
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
@@ -124,11 +121,14 @@ function guardarStock() {
     let producto = productos[i];
     let nuevoValor = document.querySelector(`#stock${i + 1}-input`).value;
 
+    // Validación de los datos ingresados para el stock
     if (nuevoValor != "" && nuevoValor > 0) {
       producto.stock = nuevoValor;
       document.querySelector(`#stockValor${i + 1}`).innerText = producto.stock;
+      document.querySelector(`#stock${i + 1}-input`).value = "";
     } else if (nuevoValor < 0) {
       alert("Los datos ingresados no son válidos");
+      document.querySelector(`#stock${i + 1}-input`).value = "";
     }
   });
 
@@ -172,12 +172,3 @@ botonCalcular.addEventListener("click", calcular);
 
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
 botonGuardarStock.addEventListener("click", guardarStock);
-
-// const botonCargarStock = document.querySelector("#btn-cargar-stock");
-// botonCargarStock.addEventListener("click", () => {
-//   let listaProductos = JSON.parse(localStorage.getItem("productos"));
-
-//   listaProductos[0].stock == undefined
-//     ? alert("No hay ningún stock guardado")
-//     : cargarStock();
-// });
