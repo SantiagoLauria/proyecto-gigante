@@ -26,3 +26,15 @@ p{
     flex-wrap: wrap;
   }
 }
+
+.companiero{
+  position: fixed ;
+  left: 1rem;
+  top: 1rem;
+  min-height: 20px;
+  min-width: 20px;
+}
+.companiero p{
+  color: white;
+  text-shadow: 5px 2px 5px black;
+}
