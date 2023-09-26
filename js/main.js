@@ -1,4 +1,25 @@
 let total = 0;
+
+// Funciones para falicitar hacer alertas
+function sweetAlert(icono, mensaje) {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: false,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
+
+  Toast.fire({
+    icon: icono,
+    title: mensaje,
+  });
+}
+
 // Lista de productos
 const productos = [
   { id: 1, nombre: "Heineken", precio: 1500, stock: 0 },
@@ -84,8 +105,6 @@ function insertarHTMLStock(producto) {
   pNuevo.classList.add("fw-bold");
   pNuevo.innerHTML = producto.stock;
 
-  // bloqueNuevo.innerHTML = `<label for="prod${producto.id}" id="prod${producto.id}-label">${producto.nombre}  $${producto.precio}</label>
-  //   <input type="number" name="prod${producto.id}" id="prod${producto.id}-input"/>`;
   bloqueNuevo.appendChild(labelNuevo);
   bloqueNuevo.appendChild(inputNuevo);
   bloqueNuevo.appendChild(pNuevo);
@@ -117,6 +136,7 @@ function calcular() {
 
 // Función para guardar el stock de cada producto en el array -productos- y pasarlos al HTML
 function guardarStock() {
+  let contador = 0;
   productos.forEach((elemento, i) => {
     let producto = productos[i];
     let nuevoValor = document.querySelector(`#stock${i + 1}-input`).value;
@@ -127,11 +147,16 @@ function guardarStock() {
       document.querySelector(`#stockValor${i + 1}`).innerText = producto.stock;
       document.querySelector(`#stock${i + 1}-input`).value = "";
     } else if (nuevoValor < 0) {
-      alert("Los datos ingresados no son válidos");
+      contador++;
       document.querySelector(`#stock${i + 1}-input`).value = "";
     }
   });
-
+  contador > 0
+    ? sweetAlert(
+        "warning",
+        "Alguno de los valores ingresados no son válidos\nEl resto se guardó con éxito"
+      )
+    : sweetAlert("success", "Stock guardado con éxito");
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
 }
 
@@ -166,9 +191,13 @@ listaProductos[0].stock == undefined
   ? alert("No hay ningún stock guardado")
   : cargarStock();
 
+sweetAlert("success", "Stock cargado con éxito");
+
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
-botonCalcular.addEventListener("click", calcular);
+botonCalcular.addEventListener("click", () => {
+  calcular();
+});
 
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
 botonGuardarStock.addEventListener("click", guardarStock);
