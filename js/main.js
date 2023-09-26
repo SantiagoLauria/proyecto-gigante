@@ -95,14 +95,24 @@ function insertarHTMLStock(producto) {
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
+
   for (let i = 0; i < productos.length; i++) {
     let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
-    if (numero >= 0) {
+
+    if (
+      numero >= 0 &&
+      numero <= document.querySelector(`#stockValor${i + 1}`).innerText
+    ) {
       total += numero * productos[i].precio;
       productos[i].stock -= numero;
       document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
+    } else if (
+      numero > document.querySelector(`#stockValor${i + 1}`).innerText
+    ) {
+      alert("Las cantidad vendidas no pueden exceder el stock");
     }
   }
+
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
   localStorage.setItem("productos", JSON.stringify(productos));
@@ -112,11 +122,13 @@ function calcular() {
 function guardarStock() {
   productos.forEach((elemento, i) => {
     let producto = productos[i];
-    if (document.querySelector(`#stock${i + 1}-input`).value != "") {
-      producto.stock = document.querySelector(`#stock${i + 1}-input`).value;
-      producto.stock != "" &&
-        (document.querySelector(`#stockValor${i + 1}`).innerText =
-          producto.stock);
+    let nuevoValor = document.querySelector(`#stock${i + 1}-input`).value;
+
+    if (nuevoValor != "" && nuevoValor > 0) {
+      producto.stock = nuevoValor;
+      document.querySelector(`#stockValor${i + 1}`).innerText = producto.stock;
+    } else if (nuevoValor < 0) {
+      alert("Los datos ingresados no son válidos");
     }
   });
 
