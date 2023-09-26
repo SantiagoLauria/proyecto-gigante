@@ -31,9 +31,6 @@ const productos = [
   { id: 7, nombre: "Monster Energy", precio: 700, stock: 0 },
 ];
 
-!localStorage.getItem("productos") &&
-  localStorage.setItem("productos", JSON.stringify(productos));
-
 // Función para insertar código HTML de cada producto
 function instertarHTMLDeProductos(producto) {
   let bloqueNuevo = document.createElement("li");
@@ -114,20 +111,36 @@ function insertarHTMLStock(producto) {
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
+  let todoBien = true;
   productos.forEach((element, i) => {
     let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
     let stock = document.querySelector(`#stockValor${i + 1}`).innerText;
 
     //  Validación de que lo vendido sea menor al stock
-    if (numero >= 0 && numero <= stock) {
-      total += numero * productos[i].precio;
-      productos[i].stock -= numero;
-      document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
-      document.querySelector(`#prod${i + 1}-input`).value = "";
-    } else if (numero > stock) {
-      alert("Las cantidad vendidas no pueden exceder el stock");
+    if (numero < 0 || numero >= stock) {
+      todoBien = false;
     }
   });
+
+  if (todoBien) {
+    productos.forEach((element, i) => {
+      let numero = parseInt(
+        document.querySelector(`#prod${i + 1}-input`).value
+      );
+      if (Number.isInteger(numero)) {
+        total += numero * productos[i].precio;
+        productos[i].stock -= numero;
+        document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
+        document.querySelector(`#prod${i + 1}-input`).value = "";
+      }
+    });
+    sweetAlert("success", "Calculado y restado del stock con éxito");
+  } else {
+    sweetAlert(
+      "error",
+      "Revisa la cantidades ingresadas e inténtalo nuevamente"
+    );
+  }
 
   let elementoTotal = document.querySelector("#total");
   elementoTotal.innerText = `Total $${total}`;
@@ -185,13 +198,12 @@ productos.forEach((producto) => insertarHTMLStock(producto));
 // liStock();
 // Para cargar el stock automaticamente
 
-let listaProductos = JSON.parse(localStorage.getItem("productos"));
-
-listaProductos[0].stock == undefined
-  ? alert("No hay ningún stock guardado")
-  : cargarStock();
-
-sweetAlert("success", "Stock cargado con éxito");
+if (!localStorage.getItem("productos")) {
+  sweetAlert("warning", "No hay ningún stock guardado");
+  localStorage.setItem("productos", JSON.stringify(productos));
+} else {
+  cargarStock(), sweetAlert("success", "Stock cargado con éxito");
+}
 
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
