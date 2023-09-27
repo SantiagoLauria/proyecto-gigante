@@ -1,12 +1,16 @@
 let total = 0;
 let pokemon;
+let numeroRandom;
 // Funcion numeros aleatorios
 const random = () => Math.floor(Math.random() * (251 - 1)) + 1;
 
-numeroRandom = random();
+if (!localStorage.getItem("pokemon")) {
+  localStorage.setItem("pokemon", `${random()}`);
+}
+numeroRandom = localStorage.getItem("pokemon");
 
 setTimeout(() => {
-  fetch(`https://pokeapi.co/api/v2/pokemon/${random()}/`)
+  fetch(`https://pokeapi.co/api/v2/pokemon/${numeroRandom}/`)
     .then((resp) => resp.json())
     .then((data) => {
       pokemon = data;
