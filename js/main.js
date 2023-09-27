@@ -3,6 +3,8 @@ let pokemon;
 // Funcion numeros aleatorios
 const random = () => Math.floor(Math.random() * (251 - 1)) + 1;
 
+numeroRandom = random();
+
 setTimeout(() => {
   fetch(`https://pokeapi.co/api/v2/pokemon/${random()}/`)
     .then((resp) => resp.json())
@@ -12,19 +14,37 @@ setTimeout(() => {
       console.log(pokemon.name);
       companiero(pokemon);
     });
-}, 2000);
+}, 500);
 
-// Funciones para insertar el compañero
+// Funcion para insertar el compañero
 function companiero(pokemon) {
   const contenedor = document.querySelector("#companiero");
+
   let p = document.createElement("p");
   p.classList.add("m-0");
   p.innerText = `${pokemon.name} te saluda!`;
-  contenedor.append(p);
+
   let img = document.createElement("img");
   img.setAttribute("src", pokemon.sprites.front_default);
-  contenedor.append(img);
+
+  let boton = document.createElement("button");
+  boton.classList.add("btn");
+  boton.setAttribute("id", "btn-companiero");
+  let i = document.createElement("i");
+  i.classList.add("bi", "bi-x-circle", "text-light");
+  boton.appendChild(i);
+  p.appendChild(boton);
+  contenedor.appendChild(p);
+  contenedor.appendChild(img);
 }
+
+// Funcion para eliminar compañero
+function eliminarCompaniero() {
+  let elemento = document.querySelector("#companiero");
+  console.log(elemento);
+  elemento.remove();
+}
+
 // Funciones para falicitar hacer alertas
 function sweetAlert(icono, mensaje) {
   const Toast = Swal.mixin({
@@ -238,3 +258,11 @@ botonCalcular.addEventListener("click", () => {
 
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
 botonGuardarStock.addEventListener("click", guardarStock);
+
+setTimeout(() => {
+  const botonCompaniero = document.querySelector("#btn-companiero");
+  console.log(botonCompaniero);
+  botonCompaniero.addEventListener("click", () => {
+    eliminarCompaniero();
+  });
+}, 800);

@@ -25,6 +25,12 @@ p{
   main{
     flex-wrap: wrap;
   }
+  #lista-productos input{
+    width: 5rem;
+  }
+  #lista-stock input{
+    width: 5rem;
+  }
 }
 
 .companiero{
@@ -33,8 +39,12 @@ p{
   top: 1rem;
   min-height: 20px;
   min-width: 20px;
+  max-width: fit-content;
 }
 .companiero p{
   color: white;
   text-shadow: 5px 2px 5px black;
+}
+.companiero img{
+  margin-right: auto;
 }
