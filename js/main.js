@@ -4,42 +4,69 @@ let numeroRandom;
 // Funcion numeros aleatorios
 const random = () => Math.floor(Math.random() * (251 - 1)) + 1;
 
-if (!localStorage.getItem("pokemon")) {
-  localStorage.setItem("pokemon", `${random()}`);
-}
-numeroRandom = localStorage.getItem("pokemon");
-
 setTimeout(() => {
+  fetchCompaniero();
+}, 500);
+
+function fetchCompaniero() {
+  if (!localStorage.getItem("pokemon")) {
+    localStorage.setItem("pokemon", `${random()}`);
+  }
+  numeroRandom = localStorage.getItem("pokemon");
   fetch(`https://pokeapi.co/api/v2/pokemon/${numeroRandom}/`)
     .then((resp) => resp.json())
     .then((data) => {
       pokemon = data;
       console.log(pokemon);
       console.log(pokemon.name);
-      companiero(pokemon);
+      mostrarCompaniero(pokemon);
     });
-}, 500);
-
+}
 // Funcion para insertar el compañero
-function companiero(pokemon) {
+function mostrarCompaniero(pokemon) {
   const contenedor = document.querySelector("#companiero");
 
-  let p = document.createElement("p");
+  let div = document.createElement("div");
+  div;
+
+  let p = document.createElement("p"); // Nombre
   p.classList.add("m-0");
   p.innerText = `${pokemon.name} te saluda!`;
 
-  let img = document.createElement("img");
+  let img = document.createElement("img"); // Sprite del pkm
   img.setAttribute("src", pokemon.sprites.front_default);
 
-  let boton = document.createElement("button");
-  boton.classList.add("btn");
-  boton.setAttribute("id", "btn-companiero");
+  let botonBorrar = document.createElement("button"); // Botón con ícono
+  botonBorrar.classList.add("btn");
+  botonBorrar.setAttribute("id", "btn-companiero");
   let i = document.createElement("i");
   i.classList.add("bi", "bi-x-circle", "text-light");
-  boton.appendChild(i);
-  p.appendChild(boton);
-  contenedor.appendChild(p);
-  contenedor.appendChild(img);
+  botonBorrar.appendChild(i);
+
+  let botonRegenerar = document.createElement("button");
+  botonRegenerar.classList.add("btn");
+  botonRegenerar.setAttribute("id", "btn-regenerar");
+  i = document.createElement("i");
+  i.classList.add("bi", "bi-arrow-repeat", "text-light");
+  botonRegenerar.appendChild(i);
+
+  div.appendChild(botonRegenerar);
+  div.appendChild(botonBorrar);
+  contenedor.append(div, img, p);
+
+  // Evento del botón de borrar
+  const btnBorrar = document.querySelector("#btn-companiero");
+  btnBorrar.addEventListener("click", () => {
+    eliminarCompaniero();
+  });
+  const btnRegenerar = document.querySelector("#btn-regenerar");
+  btnRegenerar.addEventListener("click", () => {
+    localStorage.removeItem("pokemon");
+    while (contenedor.firstChild) {
+      contenedor.removeChild(contenedor.firstChild);
+    }
+    fetchCompaniero();
+  });
 }
 
 // Funcion para eliminar compañero
@@ -262,11 +289,3 @@ botonCalcular.addEventListener("click", () => {
 
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
 botonGuardarStock.addEventListener("click", guardarStock);
-
-setTimeout(() => {
-  const botonCompaniero = document.querySelector("#btn-companiero");
-  console.log(botonCompaniero);
-  botonCompaniero.addEventListener("click", () => {
-    eliminarCompaniero();
-  });
-}, 800);
