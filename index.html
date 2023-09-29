@@ -13,39 +13,78 @@
 
 <body class="bg-dark">
   <h1 class="my-3 text-light text-center">Calculadora Gigante</h1>
-  <main class="container d-flex p-2 flex-row justify-content-evenly align-items-center mt-1">
-    <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
-      <p class="my-1 text-center text-light fs-5">
-        Ingrese la cantidad vendida para calcular el total
-      </p>
-      <div class="card m-2">
-        <form id="form-productos" class="">
-          <h3 class="card-header bg-primary-subtle">Lista de productos:</h3>
-          <ul class="list-group list-group-flush" id="lista-productos">
-            <!-- <label for="prod1" id="prod1-label">Producto 1</label>
-              <input type="number" name="prod1" id="prod1-input" /> -->
-          </ul>
-        </form>
-        <button class="btn btn-primary m-2" id="btn-calcular">Calcular total</button>
+  <main>
+    <!-- Modal para editar la lista de productos -->
+    <div class="modal fade" id="modal-editar" tabindex="-1" aria-labelledby="modal-editarLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary-subtle">
+            <h1 class="modal-title fs-4 " id="modal-editarLabel">Editor de productos</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group list-group-flush" id="lista-editar-productos">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="fw-bold">Nombre</div>
+                <div class="fw-bold">Precio</div>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="btn-editar-guardar">Guardar cambios</button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
-      <p class="my-1 text-light fs-5 text-center">
-        Modifique las cantidades y pulse Guardar stock
-      </p>
-      <div class="card m-2">
-        <form id="form-stock" class="">
-          <h3 class="card-header bg-primary-subtle">Stock:</h3>
-          <ul class="list-group list-group-flush" id="lista-stock">
-          </ul>
-        </form>
-        <button class="btn btn-primary m-2" id="btn-guardar-stock">Guardar stock</button>
+
+    <div class="contenedor-productos container d-flex p-2 flex-row justify-content-evenly align-items-center mt-1">
+
+      <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
+        <p class="my-1 text-center text-light fs-5">
+          Ingrese la cantidad vendida para calcular el total
+        </p>
+        <div class="card m-2">
+          <form id="form-productos" class="">
+            <div class="card-header bg-primary-subtle d-flex justify-content-between align-items-center">
+              <h3 class="m-0 d-inline">Lista de productos:</h3>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-editar">
+                Editar
+              </button>
+            </div>
+            <ul class="list-group list-group-flush" id="lista-productos">
+              <!-- <label for="prod1" id="prod1-label">Producto 1</label>
+                <input type="number" name="prod1" id="prod1-input" /> -->
+            </ul>
+          </form>
+          <button class="btn btn-primary m-2" id="btn-calcular">Calcular total</button>
+        </div>
+      </div>
+      <div class="container d-flex p-2 flex-column justify-content-evenly align-items-center">
+        <p class="my-1 text-light fs-5 text-center">
+          Modifique las cantidades y pulse Guardar stock
+        </p>
+        <div class="card m-2">
+          <form id="form-stock" class="">
+            <div class="card-header bg-primary-subtle">
+              <h3 class="m-0">Stock:</h3>
+            </div>
+            <ul class="list-group list-group-flush" id="lista-stock">
+            </ul>
+          </form>
+          <button class="btn btn-primary m-2" id="btn-guardar-stock">Guardar stock</button>
+        </div>
+      </div>
+      <div class="companiero container d-flex flex-column justify-content-center align-items-center" id="companiero">
       </div>
     </div>
-    <div class="companiero container d-flex flex-column justify-content-center align-items-center" id="companiero">
-    </div>
+    <div class="historial" id="historial"></div>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
   <script src="./js/main.js"></script>
 </body>
 

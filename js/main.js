@@ -97,6 +97,7 @@ function sweetAlert(icono, mensaje) {
 }
 
 // Lista de productos
+
 const productos = [
   { id: 1, nombre: "Heineken", precio: 1500, stock: 0 },
   { id: 2, nombre: "Miller", precio: 1300, stock: 0 },
@@ -106,6 +107,26 @@ const productos = [
   { id: 6, nombre: "Powerade 500ml", precio: 500, stock: 0 },
   { id: 7, nombre: "Monster Energy", precio: 700, stock: 0 },
 ];
+
+// Función editar productos
+function insertarEditarProductos(producto) {
+  let li = document.createElement("li");
+  li.classList.add(
+    "d-flex",
+    "justify-content-between",
+    "align-items-center",
+    "list-group-item"
+  );
+  let inputNombre = document.createElement("input");
+  inputNombre.setAttribute("id", `prod${producto.id}-nombre`);
+  inputNombre.setAttribute("value", `${producto.nombre}`);
+  let inputPrecio = document.createElement("input");
+  inputPrecio.setAttribute("id", `prod${producto.id}-precio`);
+  inputPrecio.setAttribute("value", `${producto.precio}`);
+  li.append(inputNombre, inputPrecio);
+
+  document.querySelector("#lista-editar-productos").append(li);
+}
 
 // Función para insertar código HTML de cada producto
 function instertarHTMLDeProductos(producto) {
@@ -240,6 +261,7 @@ function guardarStock() {
       document.querySelector(`#stock${i + 1}-input`).value = "";
     }
   });
+
   contador > 0
     ? sweetAlert(
         "warning",
@@ -249,17 +271,24 @@ function guardarStock() {
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
 }
 
-function cargarStock() {
+function cargarProductos() {
   let listaProductos = JSON.parse(localStorage.getItem("productos"));
-  productos.forEach(
-    (elemento, i) => (productos[i].stock = listaProductos[i].stock)
-  );
+  productos.forEach((elemento, i) => {
+    productos[i].id = listaProductos[i].id;
+    productos[i].nombre = listaProductos[i].nombre;
+    productos[i].precio = listaProductos[i].precio;
+    productos[i].stock = listaProductos[i].stock;
+  });
+}
+// Cargar lista de productos de localStorage
 
-  for (let i = 0; i < listaProductos.length; i++) {
-    let cantidad = listaProductos[i].stock;
-    let valor = document.querySelector(`#stockValor${i + 1}`);
-    valor.innerHTML = cantidad;
-  }
+if (!localStorage.getItem("productos")) {
+  sweetAlert("warning", "No hay ningún stock guardado");
+  localStorage.setItem("productos", JSON.stringify(productos));
+} else {
+  cargarProductos();
+
+  sweetAlert("success", "Stock cargado con éxito");
 }
 
 // Declaración del contenedor donde se insertan los productos
@@ -271,15 +300,12 @@ productos.forEach((producto) => instertarHTMLDeProductos(producto));
 liTotal();
 
 productos.forEach((producto) => insertarHTMLStock(producto));
-// liStock();
-// Para cargar el stock automaticamente
-
-if (!localStorage.getItem("productos")) {
-  sweetAlert("warning", "No hay ningún stock guardado");
-  localStorage.setItem("productos", JSON.stringify(productos));
-} else {
-  cargarStock(), sweetAlert("success", "Stock cargado con éxito");
+for (let i = 0; i < productos.length; i++) {
+  let cantidad = productos[i].stock;
+  let valor = document.querySelector(`#stockValor${i + 1}`);
+  valor.innerHTML = cantidad;
 }
+// liStock();
 
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
@@ -288,4 +314,23 @@ botonCalcular.addEventListener("click", () => {
 });
 
 const botonGuardarStock = document.querySelector("#btn-guardar-stock");
-botonGuardarStock.addEventListener("click", guardarStock);
+botonGuardarStock.addEventListener("click", () => {
+  guardarStock();
+});
+
+productos.forEach((producto) => insertarEditarProductos(producto));
+const botonEditar = document.querySelector("#btn-editar-guardar");
+botonEditar.addEventListener("click", () => {
+  productos.forEach((element, i) => {
+    let producto = productos[i];
+    let nombre = document.querySelector(`#prod${i + 1}-nombre`).value;
+    let precio = document.querySelector(`#prod${i + 1}-precio`).value;
+    if (productos[i].nombre != nombre) {
+      productos[i].nombre = nombre;
+      productos[i].stock = 0;
+    }
+    productos[i].precio != precio && (productos[i].precio = precio);
+    console.log(productos);
+  });
+  localStorage.setItem("productos", JSON.stringify(productos));
+});
