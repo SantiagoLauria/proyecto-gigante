@@ -310,7 +310,9 @@ botonGuardarStock.addEventListener("click", () => {
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
 });
 
-productos.forEach((producto) => insertarEditarProductos(producto)); // Para insertar en el HTML los elementos para editar
+setTimeout(() => {
+  productos.forEach((producto) => insertarEditarProductos(producto));
+}); // Para insertar en el HTML los elementos para editar
 const botonEditar = document.querySelector("#btn-editar-guardar");
 botonEditar.addEventListener("click", () => {
   productos.forEach((element, i) => {
