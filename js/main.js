@@ -37,7 +37,6 @@ function fetchCompaniero() {
     .then((resp) => resp.json())
     .then((data) => {
       pokemon = data;
-
       mostrarCompaniero(pokemon);
     });
 }
@@ -194,7 +193,7 @@ function calcular() {
     let stock = document.querySelector(`#stockValor${i + 1}`).innerText;
 
     //  Validación de que lo vendido sea menor al stock
-    if (numero < 0 || numero >= stock) {
+    if (numero < 0 || numero > stock) {
       todoBien = false;
     }
   });
@@ -275,7 +274,7 @@ const contenedorStock = document.querySelector("#lista-stock");
 setTimeout(() => {
   productos.forEach((producto) => instertarHTMLDeProductos(producto));
   liTotal();
-});
+}, 0);
 
 // Eventos
 const botonCalcular = document.querySelector("#btn-calcular");
@@ -323,5 +322,34 @@ botonEditar.addEventListener("click", () => {
     }
     productos[i].precio != precio && (productos[i].precio = precio);
   });
+  setTimeout(() => {
+    document.querySelector("#lista-productos").innerHTML = ""; // Para actualizar la lista de productos
+    productos.forEach((producto) => instertarHTMLDeProductos(producto));
+    liTotal();
+    document.querySelector("#lista-editar-productos").innerHTML = "";
+    let li = document.createElement("li");
+    li.classList.add(
+      "list-group-item",
+      "justify-content-between",
+      "align-items-center"
+    );
+    let div = document.createElement("div"); // Para actualizar la lista de editar
+    let div2 = document.createElement("div");
+    div.classList.add("fw-bold");
+    div2.classList.add("fw-bold");
+    div.innerText = "Nombre";
+    div2.innerText = "Precio";
+    li.append(div, div2);
+    document.querySelector("#lista-editar-productos").append(li);
+    productos.forEach((producto) => insertarEditarProductos(producto));
+
+    document.querySelector("#lista-stock").innerHTML = "";
+    productos.forEach((producto) => insertarHTMLStock(producto)); //Para actualizar la lista del stock
+    for (let i = 0; i < productos.length; i++) {
+      let cantidad = productos[i].stock;
+      let valor = document.querySelector(`#stockValor${i + 1}`);
+      valor.innerHTML = cantidad;
+    }
+  }, 0);
   localStorage.setItem("productos", JSON.stringify(productos));
 });
