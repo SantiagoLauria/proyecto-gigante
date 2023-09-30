@@ -20,6 +20,14 @@ p{
 #lista-stock input{
   width: 100%;
 }
+ #lista-editar-productos li{
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-gap: 2rem;
+ }
+#lista-editar-productos input{
+  width: 100%;
+}
 
 @media (max-width: 768px) {
   

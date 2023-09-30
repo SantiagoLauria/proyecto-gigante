@@ -4,6 +4,26 @@ let numeroRandom;
 // Funcion numeros aleatorios
 const random = () => Math.floor(Math.random() * (251 - 1)) + 1;
 
+// Funciones para falicitar hacer alertas
+function sweetAlert(icono, mensaje) {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: false,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
+
+  Toast.fire({
+    icon: icono,
+    title: mensaje,
+  });
+}
+
 setTimeout(() => {
   fetchCompaniero();
 }, 500);
@@ -57,8 +77,11 @@ function mostrarCompaniero(pokemon) {
   // Evento del botón de borrar
   const btnBorrar = document.querySelector("#btn-companiero");
   btnBorrar.addEventListener("click", () => {
-    eliminarCompaniero();
+    let elemento = document.querySelector("#companiero");
+    console.log(elemento);
+    elemento.remove();
   });
+  // Evento del boton regenerar
   const btnRegenerar = document.querySelector("#btn-regenerar");
   btnRegenerar.addEventListener("click", () => {
     localStorage.removeItem("pokemon");
@@ -66,33 +89,6 @@ function mostrarCompaniero(pokemon) {
       contenedor.removeChild(contenedor.firstChild);
     }
     fetchCompaniero();
-  });
-}
-
-// Funcion para eliminar compañero
-function eliminarCompaniero() {
-  let elemento = document.querySelector("#companiero");
-  console.log(elemento);
-  elemento.remove();
-}
-
-// Funciones para falicitar hacer alertas
-function sweetAlert(icono, mensaje) {
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: false,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
-  });
-
-  Toast.fire({
-    icon: icono,
-    title: mensaje,
   });
 }
 
@@ -112,7 +108,6 @@ const productos = [
 function insertarEditarProductos(producto) {
   let li = document.createElement("li");
   li.classList.add(
-    "d-flex",
     "justify-content-between",
     "align-items-center",
     "list-group-item"
@@ -163,19 +158,6 @@ function liTotal() {
   bloqueNuevo.setAttribute("id", "total");
   bloqueNuevo.innerHTML = `Total $${total}`;
   contenedor.appendChild(bloqueNuevo);
-}
-
-function liStock() {
-  let bloqueNuevo = document.createElement("li");
-  bloqueNuevo.classList.add(
-    "list-group-item",
-    "bg-primary-subtle",
-    "fw-bold",
-    "text-center"
-  );
-  bloqueNuevo.setAttribute("id", "total");
-  bloqueNuevo.innerHTML = `Total $${total}`;
-  contenedorStock.appendChild(bloqueNuevo);
 }
 
 // Función para insertar HTML del stock
@@ -244,8 +226,70 @@ function calcular() {
   localStorage.setItem("productos", JSON.stringify(productos));
 }
 
-// Función para guardar el stock de cada producto en el array -productos- y pasarlos al HTML
-function guardarStock() {
+// Función para cargar productos desde localStorage
+async function cargarProductos() {
+  try {
+    const productosGuardados = await obtenerProductosDeLocalStorage();
+    productos.forEach((elemento, i) => {
+      productos[i].id = productosGuardados[i].id;
+      productos[i].nombre = productosGuardados[i].nombre;
+      productos[i].precio = productosGuardados[i].precio;
+      productos[i].stock = productosGuardados[i].stock;
+      // console.log("socotroco");
+    });
+    sweetAlert("success", "Stock cargado con éxito");
+  } catch (error) {
+    sweetAlert("warning", "No se pudo cargar el stock");
+  }
+}
+
+// Función para obtener productos de localStorage
+function obtenerProductosDeLocalStorage() {
+  return new Promise((resolve, reject) => {
+    const productosGuardados = localStorage.getItem("productos");
+    if (productosGuardados) {
+      resolve(JSON.parse(productosGuardados));
+    } else {
+      reject("No hay datos en localStorage");
+    }
+  });
+}
+console.log(productos);
+// Promesa y función asíncrona para cargar productos de localStorage y stock
+obtenerProductosDeLocalStorage()
+  .then(() => {
+    cargarProductos();
+  }, 0)
+  .catch(sweetAlert("warning", "No hay stock guardado"));
+
+setTimeout(() => {
+  productos.forEach((producto) => insertarHTMLStock(producto));
+  for (let i = 0; i < productos.length; i++) {
+    let cantidad = productos[i].stock;
+    let valor = document.querySelector(`#stockValor${i + 1}`);
+    valor.innerHTML = cantidad;
+  }
+}, 0);
+
+// Declaración del contenedor donde se insertan los productos
+const contenedor = document.querySelector("#lista-productos");
+const contenedorStock = document.querySelector("#lista-stock");
+
+// Iteración para la inserción del código HTML correspondiente a cada producto
+setTimeout(() => {
+  productos.forEach((producto) => instertarHTMLDeProductos(producto));
+  liTotal();
+});
+
+// Eventos
+const botonCalcular = document.querySelector("#btn-calcular");
+botonCalcular.addEventListener("click", () => {
+  calcular();
+});
+
+// Evento y función de guardar stock
+const botonGuardarStock = document.querySelector("#btn-guardar-stock");
+botonGuardarStock.addEventListener("click", () => {
   let contador = 0;
   productos.forEach((elemento, i) => {
     let producto = productos[i];
@@ -269,56 +313,9 @@ function guardarStock() {
       )
     : sweetAlert("success", "Stock guardado con éxito");
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
-}
-
-function cargarProductos() {
-  let listaProductos = JSON.parse(localStorage.getItem("productos"));
-  productos.forEach((elemento, i) => {
-    productos[i].id = listaProductos[i].id;
-    productos[i].nombre = listaProductos[i].nombre;
-    productos[i].precio = listaProductos[i].precio;
-    productos[i].stock = listaProductos[i].stock;
-  });
-}
-// Cargar lista de productos de localStorage
-
-if (!localStorage.getItem("productos")) {
-  sweetAlert("warning", "No hay ningún stock guardado");
-  localStorage.setItem("productos", JSON.stringify(productos));
-} else {
-  cargarProductos();
-
-  sweetAlert("success", "Stock cargado con éxito");
-}
-
-// Declaración del contenedor donde se insertan los productos
-const contenedor = document.querySelector("#lista-productos");
-const contenedorStock = document.querySelector("#lista-stock");
-
-// Iteración para la inserción del código HTML correspondiente a cada producto
-productos.forEach((producto) => instertarHTMLDeProductos(producto));
-liTotal();
-
-productos.forEach((producto) => insertarHTMLStock(producto));
-for (let i = 0; i < productos.length; i++) {
-  let cantidad = productos[i].stock;
-  let valor = document.querySelector(`#stockValor${i + 1}`);
-  valor.innerHTML = cantidad;
-}
-// liStock();
-
-// Eventos
-const botonCalcular = document.querySelector("#btn-calcular");
-botonCalcular.addEventListener("click", () => {
-  calcular();
 });
 
-const botonGuardarStock = document.querySelector("#btn-guardar-stock");
-botonGuardarStock.addEventListener("click", () => {
-  guardarStock();
-});
-
-productos.forEach((producto) => insertarEditarProductos(producto));
+productos.forEach((producto) => insertarEditarProductos(producto)); // Para insertar en el HTML los elementos para editar
 const botonEditar = document.querySelector("#btn-editar-guardar");
 botonEditar.addEventListener("click", () => {
   productos.forEach((element, i) => {
