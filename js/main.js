@@ -37,8 +37,7 @@ function fetchCompaniero() {
     .then((resp) => resp.json())
     .then((data) => {
       pokemon = data;
-      console.log(pokemon);
-      console.log(pokemon.name);
+
       mostrarCompaniero(pokemon);
     });
 }
@@ -78,7 +77,6 @@ function mostrarCompaniero(pokemon) {
   const btnBorrar = document.querySelector("#btn-companiero");
   btnBorrar.addEventListener("click", () => {
     let elemento = document.querySelector("#companiero");
-    console.log(elemento);
     elemento.remove();
   });
   // Evento del boton regenerar
@@ -235,7 +233,6 @@ async function cargarProductos() {
       productos[i].nombre = productosGuardados[i].nombre;
       productos[i].precio = productosGuardados[i].precio;
       productos[i].stock = productosGuardados[i].stock;
-      // console.log("socotroco");
     });
     sweetAlert("success", "Stock cargado con éxito");
   } catch (error) {
@@ -254,7 +251,6 @@ function obtenerProductosDeLocalStorage() {
     }
   });
 }
-console.log(productos);
 // Promesa y función asíncrona para cargar productos de localStorage y stock
 obtenerProductosDeLocalStorage()
   .then(() => {
@@ -319,7 +315,6 @@ productos.forEach((producto) => insertarEditarProductos(producto)); // Para inse
 const botonEditar = document.querySelector("#btn-editar-guardar");
 botonEditar.addEventListener("click", () => {
   productos.forEach((element, i) => {
-    let producto = productos[i];
     let nombre = document.querySelector(`#prod${i + 1}-nombre`).value;
     let precio = document.querySelector(`#prod${i + 1}-precio`).value;
     if (productos[i].nombre != nombre) {
@@ -327,7 +322,6 @@ botonEditar.addEventListener("click", () => {
       productos[i].stock = 0;
     }
     productos[i].precio != precio && (productos[i].precio = precio);
-    console.log(productos);
   });
   localStorage.setItem("productos", JSON.stringify(productos));
 });
