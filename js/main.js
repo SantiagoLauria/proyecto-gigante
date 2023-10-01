@@ -45,7 +45,6 @@ function mostrarCompaniero(pokemon) {
   const contenedor = document.querySelector("#companiero");
 
   let div = document.createElement("div");
-  div;
 
   let p = document.createElement("p"); // Nombre
   p.classList.add("m-0");
@@ -112,9 +111,19 @@ function insertarEditarProductos(producto) {
   let inputNombre = document.createElement("input");
   inputNombre.setAttribute("id", `prod${producto.id}-nombre`);
   inputNombre.setAttribute("value", `${producto.nombre}`);
+
   let inputPrecio = document.createElement("input");
   inputPrecio.setAttribute("id", `prod${producto.id}-precio`);
   inputPrecio.setAttribute("value", `${producto.precio}`);
+
+  // let button = document.createElement("button");
+  // button.classList.add("btn", "btn-quitar", "text-danger");
+  // let i = document.createElement("i");
+  // i.classList.add("bi", "bi-dash-circle-fill");
+  // i.setAttribute("id", `btn-quitar${producto.id}`);
+
+  // button.append(i);
+
   li.append(inputNombre, inputPrecio);
 
   document.querySelector("#lista-editar-productos").append(li);
@@ -162,25 +171,23 @@ function insertarHTMLStock(producto) {
   let bloqueNuevo = document.createElement("li");
   bloqueNuevo.classList.add("list-group-item");
 
-  let labelNuevo = document.createElement("label");
+  let labelNuevo = document.createElement("label"); // <label> con atributos correspondientes
   labelNuevo.setAttribute("for", `stock${producto.id}`);
   labelNuevo.setAttribute("id", `stock${producto.id}-label`);
   labelNuevo.innerHTML = `${producto.nombre}  $${producto.precio}`;
 
-  let inputNuevo = document.createElement("input");
+  let inputNuevo = document.createElement("input"); // <input> con las clases y demás atributos necesarios
   inputNuevo.classList.add("ml-auto");
   inputNuevo.setAttribute("type", "number");
   inputNuevo.setAttribute("name", `stock${producto.id}`);
   inputNuevo.setAttribute("id", `stock${producto.id}-input`);
 
-  let pNuevo = document.createElement("p");
+  let pNuevo = document.createElement("p"); // Display del stock con DOM
   pNuevo.setAttribute("id", `stockValor${producto.id}`);
   pNuevo.classList.add("fw-bold");
   pNuevo.innerHTML = producto.stock;
 
-  bloqueNuevo.appendChild(labelNuevo);
-  bloqueNuevo.appendChild(inputNuevo);
-  bloqueNuevo.appendChild(pNuevo);
+  bloqueNuevo.append(labelNuevo, inputNuevo, pNuevo); // Append de todos los elementos
   contenedorStock.appendChild(bloqueNuevo);
 }
 
@@ -319,6 +326,7 @@ botonEditar.addEventListener("click", () => {
     let nombre = document.querySelector(`#prod${i + 1}-nombre`).value;
     let precio = document.querySelector(`#prod${i + 1}-precio`).value;
     if (productos[i].nombre != nombre) {
+      // Validación para aplicar cambios solo a valores distintos para no perder stock previo
       productos[i].nombre = nombre;
       productos[i].stock = 0;
     }
@@ -337,10 +345,13 @@ botonEditar.addEventListener("click", () => {
     );
     let div = document.createElement("div"); // Para actualizar la lista de editar
     let div2 = document.createElement("div");
+
     div.classList.add("fw-bold");
-    div2.classList.add("fw-bold");
     div.innerText = "Nombre";
+
+    div2.classList.add("fw-bold");
     div2.innerText = "Precio";
+
     li.append(div, div2);
     document.querySelector("#lista-editar-productos").append(li);
     productos.forEach((producto) => insertarEditarProductos(producto));
