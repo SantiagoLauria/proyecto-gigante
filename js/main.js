@@ -221,7 +221,7 @@ function calcular() {
   } else {
     sweetAlert(
       "error",
-      "Revisa la cantidades ingresadas e inténtalo nuevamente"
+      "Revisa las cantidades ingresadas e inténtalo nuevamente"
     );
   }
 
