@@ -24,7 +24,7 @@ p{
 #lista-editar-productos{
   li{
     display: grid;
-    grid-template-columns: 6fr 3fr ;
+    grid-template-columns: 6fr 3fr 1fr;
     grid-gap: 2rem;
     }
     input{
@@ -62,4 +62,12 @@ p{
   &:hover{
     color: grey;
   }
+}
+#btn-agregar{
+  margin-right: auto;
+  &:hover{
+  i{
+      color: #198754!important;
+    }
+}
 }

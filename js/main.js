@@ -90,24 +90,17 @@ function mostrarCompaniero(pokemon) {
 
 // Lista de productos
 
-const productos = [
-  { id: 1, nombre: "Heineken", precio: 1500, stock: 0 },
-  { id: 2, nombre: "Miller", precio: 1300, stock: 0 },
-  { id: 3, nombre: "Santa Fe Pilsen", precio: 1000, stock: 0 },
-  { id: 4, nombre: "Gaseosa 1,5L", precio: 900, stock: 0 },
-  { id: 5, nombre: "Aquarius 1,5L", precio: 700, stock: 0 },
-  { id: 6, nombre: "Powerade 500ml", precio: 500, stock: 0 },
-  { id: 7, nombre: "Monster Energy", precio: 700, stock: 0 },
-];
+const productos = [];
 
 // Función editar productos
-function insertarEditarProductos(producto) {
+function insertarEditarProductos(producto, i) {
   let li = document.createElement("li");
   li.classList.add(
     "justify-content-between",
     "align-items-center",
     "list-group-item"
   );
+  li.setAttribute("id", `editar-prod${producto.id}`)
   let inputNombre = document.createElement("input");
   inputNombre.setAttribute("id", `prod${producto.id}-nombre`);
   inputNombre.setAttribute("value", `${producto.nombre}`);
@@ -116,15 +109,15 @@ function insertarEditarProductos(producto) {
   inputPrecio.setAttribute("id", `prod${producto.id}-precio`);
   inputPrecio.setAttribute("value", `${producto.precio}`);
 
-  // let button = document.createElement("button");
-  // button.classList.add("btn", "btn-quitar", "text-danger");
-  // let i = document.createElement("i");
-  // i.classList.add("bi", "bi-dash-circle-fill");
-  // i.setAttribute("id", `btn-quitar${producto.id}`);
+  let button = document.createElement("button");
+  button.classList.add("btn", "btn-quitar", "text-danger");
+  button.setAttribute("id", `btn-quitar${i}`);
+  let icon = document.createElement("i");
+  icon.classList.add("bi", "bi-dash-circle-fill");
 
-  // button.append(i);
+  button.append(icon);
 
-  li.append(inputNombre, inputPrecio);
+  li.append(inputNombre, inputPrecio, button);
 
   document.querySelector("#lista-editar-productos").append(li);
 }
@@ -190,14 +183,72 @@ function insertarHTMLStock(producto) {
   bloqueNuevo.append(labelNuevo, inputNuevo, pNuevo); // Append de todos los elementos
   contenedorStock.appendChild(bloqueNuevo);
 }
+// Para insertar en el HTML los elementos para editar
+setTimeout(() => {
+  productos.forEach((producto, i) => insertarEditarProductos(producto, i));
+}); 
+const botonEditar = document.querySelector("#btn-editar-guardar");
+botonEditar.addEventListener("click", () => {
+  productos.forEach((element, i) => {
+
+    // if(document.querySelector(`#prod${productos[i].id}`)){
+
+      let nombre = document.querySelector(`#prod${productos[i].id}-nombre`).value;
+      let precio = document.querySelector(`#prod${productos[i].id}-precio`).value;
+      console.log(nombre, precio);
+      if (productos[i].nombre != nombre) {
+        // Validación para aplicar cambios solo a valores distintos para no perder stock previo
+        productos[i].nombre = nombre;
+        productos[i].stock = 0;
+      }
+      productos[i].precio != precio && (productos[i].precio = precio);
+    // }
+    localStorage.setItem("productos", JSON.stringify(productos));
+
+  });
+  setTimeout(() => {
+    document.querySelector("#lista-productos").innerHTML = ""; // Para actualizar la lista de productos
+    productos.forEach((producto) => instertarHTMLDeProductos(producto));
+    liTotal();
+    document.querySelector("#lista-editar-productos").innerHTML = "";
+    let li = document.createElement("li");
+    li.classList.add(
+      "list-group-item",
+      "justify-content-between",
+      "align-items-center"
+    );
+    let div = document.createElement("div"); // Para actualizar la lista de editar
+    let div2 = document.createElement("div");
+
+    div.classList.add("fw-bold");
+    div.innerText = "Nombre";
+
+    div2.classList.add("fw-bold");
+    div2.innerText = "Precio";
+
+    li.append(div, div2);
+    document.querySelector("#lista-editar-productos").append(li);
+    productos.forEach((producto, i) => insertarEditarProductos(producto, i));
+
+    document.querySelector("#lista-stock").innerHTML = "";
+    productos.forEach((producto) => insertarHTMLStock(producto)); //Para actualizar la lista del stock
+    for (let i = 0; i < productos.length; i++) {
+      let cantidad = productos[i].stock;
+      let valor = document.querySelector(`#stockValor${productos[i].id}`);
+      valor.innerHTML = cantidad;
+    }
+  }, 500);
+  localStorage.setItem("productos", JSON.stringify(productos));
+
+});
 
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
   let todoBien = true;
   productos.forEach((element, i) => {
-    let numero = parseInt(document.querySelector(`#prod${i + 1}-input`).value);
-    let stock = document.querySelector(`#stockValor${i + 1}`).innerText;
+    let numero = parseInt(document.querySelector(`#prod${productos[i].id}-input`).value);
+    let stock = document.querySelector(`#stockValor${productos[i].id}`).innerText;
 
     //  Validación de que lo vendido sea menor al stock
     if (numero < 0 || numero > stock) {
@@ -208,13 +259,13 @@ function calcular() {
   if (todoBien) {
     productos.forEach((element, i) => {
       let numero = parseInt(
-        document.querySelector(`#prod${i + 1}-input`).value
+        document.querySelector(`#prod${productos[i].id}-input`).value
       );
       if (Number.isInteger(numero)) {
         total += numero * productos[i].precio;
         productos[i].stock -= numero;
-        document.querySelector(`#stockValor${i + 1}`).innerText -= numero;
-        document.querySelector(`#prod${i + 1}-input`).value = "";
+        document.querySelector(`#stockValor${productos[i].id}`).innerText -= numero;
+        document.querySelector(`#prod${productos[i].id}-input`).value = "";
       }
     });
     sweetAlert("success", "Calculado y restado del stock con éxito");
@@ -231,44 +282,32 @@ function calcular() {
 }
 
 // Función para cargar productos desde localStorage
-async function cargarProductos() {
-  try {
-    const productosGuardados = await obtenerProductosDeLocalStorage();
-    productos.forEach((elemento, i) => {
-      productos[i].id = productosGuardados[i].id;
-      productos[i].nombre = productosGuardados[i].nombre;
-      productos[i].precio = productosGuardados[i].precio;
-      productos[i].stock = productosGuardados[i].stock;
+function cargarProductos() {
+  productosGuardados = JSON.parse(localStorage.getItem("productos"))
+  console.log(productosGuardados);
+  productosGuardados.forEach((elemento, i) => {
+      productos[i] = productosGuardados[i];
+      // productos[i].nombre = productosGuardados[i].nombre;
+      // productos[i].precio = productosGuardados[i].precio;
+      // productos[i].stock = productosGuardados[i].stock;
     });
+
     sweetAlert("success", "Stock cargado con éxito");
-  } catch (error) {
-    sweetAlert("warning", "No se pudo cargar el stock");
-  }
-}
+  } 
+
 
 // Función para obtener productos de localStorage
-function obtenerProductosDeLocalStorage() {
-  return new Promise((resolve, reject) => {
-    const productosGuardados = localStorage.getItem("productos");
-    if (productosGuardados) {
-      resolve(JSON.parse(productosGuardados));
-    } else {
-      reject("No hay datos en localStorage");
-    }
-  });
-}
+
 // Promesa y función asíncrona para cargar productos de localStorage y stock
-obtenerProductosDeLocalStorage()
-  .then(() => {
-    cargarProductos();
-  }, 0)
-  .catch(sweetAlert("warning", "No hay stock guardado"));
+if(localStorage.getItem("productos")){
+  cargarProductos()
+} else {sweetAlert("warning", "No hay ningún stock guardado")}
 
 setTimeout(() => {
   productos.forEach((producto) => insertarHTMLStock(producto));
   for (let i = 0; i < productos.length; i++) {
     let cantidad = productos[i].stock;
-    let valor = document.querySelector(`#stockValor${i + 1}`);
+    let valor = document.querySelector(`#stockValor${productos[i].id}`);
     valor.innerHTML = cantidad;
   }
 }, 0);
@@ -295,16 +334,16 @@ botonGuardarStock.addEventListener("click", () => {
   let contador = 0;
   productos.forEach((elemento, i) => {
     let producto = productos[i];
-    let nuevoValor = document.querySelector(`#stock${i + 1}-input`).value;
+    let nuevoValor = document.querySelector(`#stock${productos[i].id}-input`).value;
 
     // Validación de los datos ingresados para el stock
     if (nuevoValor != "" && nuevoValor > 0) {
       producto.stock = nuevoValor;
-      document.querySelector(`#stockValor${i + 1}`).innerText = producto.stock;
-      document.querySelector(`#stock${i + 1}-input`).value = "";
+      document.querySelector(`#stockValor${productos[i].id}`).innerText = producto.stock;
+      document.querySelector(`#stock${productos[i].id}-input`).value = "";
     } else if (nuevoValor < 0) {
       contador++;
-      document.querySelector(`#stock${i + 1}-input`).value = "";
+      document.querySelector(`#stock${productos[i].id}-input`).value = "";
     }
   });
 
@@ -317,52 +356,15 @@ botonGuardarStock.addEventListener("click", () => {
   localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
 });
 
-setTimeout(() => {
-  productos.forEach((producto) => insertarEditarProductos(producto));
-}); // Para insertar en el HTML los elementos para editar
-const botonEditar = document.querySelector("#btn-editar-guardar");
-botonEditar.addEventListener("click", () => {
-  productos.forEach((element, i) => {
-    let nombre = document.querySelector(`#prod${i + 1}-nombre`).value;
-    let precio = document.querySelector(`#prod${i + 1}-precio`).value;
-    if (productos[i].nombre != nombre) {
-      // Validación para aplicar cambios solo a valores distintos para no perder stock previo
-      productos[i].nombre = nombre;
-      productos[i].stock = 0;
-    }
-    productos[i].precio != precio && (productos[i].precio = precio);
-  });
-  setTimeout(() => {
-    document.querySelector("#lista-productos").innerHTML = ""; // Para actualizar la lista de productos
-    productos.forEach((producto) => instertarHTMLDeProductos(producto));
-    liTotal();
-    document.querySelector("#lista-editar-productos").innerHTML = "";
-    let li = document.createElement("li");
-    li.classList.add(
-      "list-group-item",
-      "justify-content-between",
-      "align-items-center"
-    );
-    let div = document.createElement("div"); // Para actualizar la lista de editar
-    let div2 = document.createElement("div");
-
-    div.classList.add("fw-bold");
-    div.innerText = "Nombre";
-
-    div2.classList.add("fw-bold");
-    div2.innerText = "Precio";
-
-    li.append(div, div2);
-    document.querySelector("#lista-editar-productos").append(li);
-    productos.forEach((producto) => insertarEditarProductos(producto));
-
-    document.querySelector("#lista-stock").innerHTML = "";
-    productos.forEach((producto) => insertarHTMLStock(producto)); //Para actualizar la lista del stock
-    for (let i = 0; i < productos.length; i++) {
-      let cantidad = productos[i].stock;
-      let valor = document.querySelector(`#stockValor${i + 1}`);
-      valor.innerHTML = cantidad;
-    }
-  }, 0);
-  localStorage.setItem("productos", JSON.stringify(productos));
-});
+setTimeout(()=>{
+  for (let i = 0; i < productos.length; i++) {
+    const element = productos[i];
+    let botonQuitar = document.querySelector(`#btn-quitar${i}`)
+    botonQuitar.addEventListener("click", ()=> {
+      productos.splice(i, 1)
+      botonQuitar.parentElement.remove()
+      console.log(productos);
+      
+    })}
+    localStorage.setItem("productos", JSON.stringify(productos))
+  }, 500)
