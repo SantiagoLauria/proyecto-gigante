@@ -91,6 +91,14 @@ function mostrarCompaniero(pokemon) {
 // Lista de productos
 
 const productos = [];
+class ProductoNuevo{
+  constructor(id, nombre, precio){
+    this.id = id
+    this.nombre = nombre
+    this.precio = precio
+    this.stock = 0
+  }
+}
 
 // Función editar productos
 function insertarEditarProductos(producto, i) {
@@ -242,6 +250,26 @@ botonEditar.addEventListener("click", () => {
 
 });
 
+function crearId(){
+  let idValida = false
+  let id = 1
+  while(!idValida){
+    let contador = 0
+    productos.forEach((elemento, i)=>{
+      if(id == productos[i].id){
+        console.log("ID ya existente");
+        id++
+        contador++
+      }
+    })
+    if(contador == 0){
+      idValida=true
+    }
+  }
+  console.log(id);
+  return id
+}
+
 // Función que toma los inputs, multiplica el precio de cada producto por la cantidad ingresada y retorna el total
 function calcular() {
   total = 0;
@@ -348,19 +376,20 @@ botonGuardarStock.addEventListener("click", () => {
   });
 
   contador > 0
-    ? sweetAlert(
-        "warning",
+  ? sweetAlert(
+    "warning",
         "Alguno de los valores ingresados no son válidos\nEl resto se guardó con éxito"
-      )
-    : sweetAlert("success", "Stock guardado con éxito");
-  localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
-});
-
-setTimeout(()=>{
-  for (let i = 0; i < productos.length; i++) {
-    const element = productos[i];
-    let botonQuitar = document.querySelector(`#btn-quitar${i}`)
-    botonQuitar.addEventListener("click", ()=> {
+        )
+        : sweetAlert("success", "Stock guardado con éxito");
+        localStorage.setItem("productos", JSON.stringify(productos)); // para guardar el stock en localStorage
+      });
+      
+      // Evento para quitar productos del array y del html
+      setTimeout(()=>{
+        for (let i = 0; i < productos.length; i++) {
+          const element = productos[i];
+          let botonQuitar = document.querySelector(`#btn-quitar${i}`)
+          botonQuitar.addEventListener("click", ()=> {
       productos.splice(i, 1)
       botonQuitar.parentElement.remove()
       console.log(productos);
@@ -368,3 +397,36 @@ setTimeout(()=>{
     })}
     localStorage.setItem("productos", JSON.stringify(productos))
   }, 500)
+
+  // Evento para agregar un producto
+  const botonAgregarProducto = document.querySelector("#btn-agregar")
+  botonAgregarProducto.addEventListener("click", ()=>{
+    let id = crearId()
+    let productoNuevo = new ProductoNuevo(id)
+    console.log(productoNuevo);
+
+    let li = document.createElement("li")
+    li.classList.add(
+      "justify-content-between",
+      "align-items-center",
+      "list-group-item"
+    );
+    let inputNombre = document.createElement("input")
+    let inputPrecio = document.createElement("input")
+    inputPrecio.setAttribute("type", "number")
+    let button = document.createElement("button");
+  button.classList.add("btn", "btn-quitar", "text-danger");
+  button.addEventListener("click", ()=>{
+    button.parentElement.remove()
+  }
+  )
+  let icon = document.createElement("i");
+  icon.classList.add("bi", "bi-dash-circle-fill");
+
+  button.append(icon)
+
+    li.append(inputNombre, inputPrecio, button)
+    document.querySelector("#lista-editar-productos").appendChild(li)
+
+
+  })
