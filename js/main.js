@@ -101,7 +101,7 @@ class ProductoNuevo{
 }
 
 // Función editar productos
-function insertarEditarProductos(producto, i) {
+function insertarEditarProductos(producto) {
   let li = document.createElement("li");
   li.classList.add(
     "justify-content-between",
@@ -116,10 +116,11 @@ function insertarEditarProductos(producto, i) {
   let inputPrecio = document.createElement("input");
   inputPrecio.setAttribute("id", `prod${producto.id}-precio`);
   inputPrecio.setAttribute("value", `${producto.precio}`);
+  inputPrecio.setAttribute("type", "number")
 
   let button = document.createElement("button");
   button.classList.add("btn", "btn-quitar", "text-danger");
-  button.setAttribute("id", `btn-quitar${i}`);
+  button.setAttribute("id", `btn-quitar${producto.id}`);
   let icon = document.createElement("i");
   icon.classList.add("bi", "bi-dash-circle-fill");
 
@@ -193,7 +194,7 @@ function insertarHTMLStock(producto) {
 }
 // Para insertar en el HTML los elementos para editar
 setTimeout(() => {
-  productos.forEach((producto, i) => insertarEditarProductos(producto, i));
+  productos.forEach((producto) => insertarEditarProductos(producto));
 }); 
 const botonEditar = document.querySelector("#btn-editar-guardar");
 botonEditar.addEventListener("click", () => {
@@ -236,7 +237,7 @@ botonEditar.addEventListener("click", () => {
 
     li.append(div, div2);
     document.querySelector("#lista-editar-productos").append(li);
-    productos.forEach((producto, i) => insertarEditarProductos(producto, i));
+    productos.forEach((producto) => insertarEditarProductos(producto));
 
     document.querySelector("#lista-stock").innerHTML = "";
     productos.forEach((producto) => insertarHTMLStock(producto)); //Para actualizar la lista del stock
@@ -388,7 +389,7 @@ botonGuardarStock.addEventListener("click", () => {
       setTimeout(()=>{
         for (let i = 0; i < productos.length; i++) {
           const element = productos[i];
-          let botonQuitar = document.querySelector(`#btn-quitar${i}`)
+          let botonQuitar = document.querySelector(`#btn-quitar${productos[i].id}`)
           botonQuitar.addEventListener("click", ()=> {
       productos.splice(i, 1)
       botonQuitar.parentElement.remove()
@@ -403,6 +404,7 @@ botonGuardarStock.addEventListener("click", () => {
   botonAgregarProducto.addEventListener("click", ()=>{
     let id = crearId()
     let productoNuevo = new ProductoNuevo(id)
+    productos.push(productoNuevo)
     console.log(productoNuevo);
 
     let li = document.createElement("li")
@@ -412,11 +414,14 @@ botonGuardarStock.addEventListener("click", () => {
       "list-group-item"
     );
     let inputNombre = document.createElement("input")
+    inputNombre.setAttribute("id", `prod${productoNuevo.id}-nombre`)
     let inputPrecio = document.createElement("input")
     inputPrecio.setAttribute("type", "number")
+    inputPrecio.setAttribute("id", `prod${productoNuevo.id}-precio`)
     let button = document.createElement("button");
-  button.classList.add("btn", "btn-quitar", "text-danger");
-  button.addEventListener("click", ()=>{
+    button.classList.add("btn", "btn-quitar", "text-danger");
+    
+    button.addEventListener("click", ()=>{
     button.parentElement.remove()
   }
   )
