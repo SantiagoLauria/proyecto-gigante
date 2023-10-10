@@ -1,6 +1,6 @@
-import insertarProductos from "../insertar-productos.js";
-import insertarEditarProductos from "../editar-productos.js";
-import insertarHTMLStock from "../insertar-stock.js";
+import insertarProductos from "../funciones/insertar-productos.js";
+import insertarEditarProductos from "../funciones/editar-productos.js";
+import insertarHTMLStock from "../funciones/insertar-stock.js";
 
 function eventoBotonEditar(array){
 
